@@ -1,7 +1,8 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import { api } from '../api';
+
 import { useSnackbar } from 'notistack';
+import axios from 'axios';
 
 const steps = [
     { number: '01', text: 'Register your interest' },
@@ -13,17 +14,24 @@ const steps = [
 
 
 const FormComponet = () => {
-  const { register, handleSubmit, formState: { errors } } = useForm();
+  const { register, handleSubmit, formState: { errors },reset } = useForm();
   const { enqueueSnackbar } = useSnackbar();
-  const onSubmit = (data) => {
-    try{
-      const result = api.post('/forms',data)
-      enqueueSnackbar('details sent sucessfully.our tean will contact you soon', { variant: 'success' });
-    }
-    catch(error){
-      console.log(error)
-      enqueueSnackbar('Error occured, please try again after some time', { variant: 'error' });
-    }
+  const onSubmit = async(data) => {
+  
+      try {
+        const result = await axios.post('http://localhost:3000/api/forms/submit', data);
+        console.log(result);
+        if (result.status === 200) {
+        enqueueSnackbar('Details sent successfully. Our team will contact you soon.', { variant: 'success' });}
+      
+      } catch (error) {
+        console.log(error);
+        enqueueSnackbar('Error occurred, please try again after some time.', { variant: 'error' });
+      }finally{
+        reset()
+      }
+   
+    
   };
 
 
@@ -37,14 +45,11 @@ const FormComponet = () => {
   
     {/* Steps Details */}
     <div className="mb-8 w-full flex justify-center">
-      <div className="w-full max-w-2xl"> {/* Updated for maximum width */}
+      <div className="w-full max-w-2xl"> 
       <ul className="flex flex-col md:flex-row justify-between items-center text-center w-full relative">
   {steps.map((step, index) => (
     <li key={index} className="flex flex-col items-center relative mb-6 md:mb-0">
-      {/* Dotted line only if it's not the last step */}
-      {index > 0 && index < steps.length - 1 && (
-        <span className={`absolute top-4 ${index % 2 === 0 ? 'w-full h-0.5' : 'h-0.5 w-0'} bg-transparent border-t border-collapse border-green-300 left-1/2 transform -translate-x-1/2 z-0 md:w-full md:h-0.5`}></span>
-      )}
+     
       <span className="bg-green-800 text-white w-8 h-8 flex items-center justify-center rounded-lg z-10">{step.number}</span>
       <p className="mt-2 text-sm border text-gray-700 p-2 border-dotted border-green-300 rounded-2xl z-10 mx-2">{step.text}</p>
     </li>
@@ -137,7 +142,7 @@ const FormComponet = () => {
       
         <option value="India">India</option>
        
-        {/* Add other countries */}
+       
       </select>
       {errors.country && <span className="text-red-500 text-sm">{errors.country.message}</span>}
     </div>

@@ -1,55 +1,33 @@
 import React, { useEffect, useState } from 'react'
 import { IoIosArrowUp } from "react-icons/io";
 import { MdOutlineKeyboardArrowDown } from "react-icons/md";
-import { api } from '../api';
 
-const faqs = [
-    {
-      question: 'How long will it take to complete my website?',
-      answer: 'The timeline depends on the complexity and scope of the website. Contact us for more details.'
-    },
-    {
-      question: 'What is the process for getting a website designed by your company?',
-      answer: 'We follow a structured process including understanding your needs, design, and development phases.'
-    },
-    {
-      question: 'Can I see examples of websites your company has designed?',
-      answer: 'Yes, feel free to contact us to view our portfolio.'
-    },
-    {
-      question: 'Do you provide website maintenance and support services after the website is launched?',
-      answer: 'Yes, we offer ongoing maintenance and support packages for all clients.'
-    },
-    {
-      question: 'What platform or technologies do you use for website development?',
-      answer: 'We use various technologies based on your needs like React, WordPress, and more.'
-    },
-    {
-      question: 'What is the cost of getting a website designed by your company?',
-      answer: 'Costs vary depending on the project requirements. Contact us for a detailed quote.'
-    },
-    {
-      question: 'If my proposal is approved, how long does it take?',
-      answer: 'The timeline depends on the proposal complexity. Once approved, we provide a clear timeline.'
-    },
-  ];
+import axios from 'axios';
+
+
 
   const FaqComponent = () => {
     const [openIndex, setOpenIndex] = useState(null);
-    // const[faqs,setFaqs]=useState([])
+    const[faqs,setFaqs]=useState([])
     const toggleOpen = (index) => {
         setOpenIndex(openIndex === index ? null : index);
       };
-      useEffect(()=>{
-        try{
-          const data =api.get('/faq')
-          
-        }catch(error){
-          console.log(error)
-        }
+     
+    useEffect(() => {
+      const fetchFaqs = async () => {
+          try {
+              const response = await axios.get('http://localhost:3000/api/faqs');
+              setFaqs(response.data);
+              console.log(faqs)
+          } catch (error) {
+              console.log('Error fetching FAQs:', error);
+          }
+      };
+
+      fetchFaqs();
+  }, []);
 
 
-      },[])
   return (
 
    <>
